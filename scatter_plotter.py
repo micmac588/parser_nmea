@@ -10,10 +10,11 @@ from controlled_animation import ControlledAnimation
 
 class ScatterPlotter(multiprocessing.Process):
 
-    def __init__(self, queue):
+    def __init__(self, queue, logger):
         super().__init__()
         self.__queue = queue
         self.__data = []
+        self.__logger = logger
 
     def run(self):
         self.fig, self.ax = plt.subplots()
@@ -28,23 +29,23 @@ class ScatterPlotter(multiprocessing.Process):
    
     def update(self, i):
         """Update the scatter plot."""
-        logging.debug("wait for data to plot")
+        self.__logger.debug("wait for data to plot")
         elem = self.__queue.get()
 
         if elem[0] == 'Start':
-            logging.debug("Start animation")
+            self.__logger.debug("Start animation")
             self.ax.set_title(elem[1])
             self.ax.set_ylabel(elem[2])
             self.ax.set_xlabel(elem[3])
             return self.scat,
 
         if elem[0] == 'Stop':
-            logging.debug("Stop animation")
+            self.__logger.debug("Stop animation")
             self.stop()
             return self.scat,
 
         self.__data.append([elem[1], elem[0]])
-        logging.debug("add %s, %s" % (elem[1], elem[0]))
+        self.__logger.debug("add %s, %s" % (elem[1], elem[0]))
 
         self.scat.set_offsets(self.__data)
         return self.scat,

@@ -1,4 +1,4 @@
 numpy==1.26.4
 matplotlib==3.8.2
 PyQt5==5.15.10
-parse
+pynmea2==1.19.0
